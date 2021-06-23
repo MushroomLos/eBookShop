@@ -1,0 +1,76 @@
+server:
+  servlet:
+    #  定义项目的访问访问路径
+    context-path: /consumer
+    #定义端口号
+  port: 7001
+
+spring:
+  application:
+    #定义应用名称，即服务名称
+    name: consumer-server
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8080/eureka/eureka
+
+resilience4j.circuitbreaker:
+  backends:
+    backendA:
+      # 关闭状态下缓冲大小
+      ringBufferSizeInClosedState: 5
+      # halfopen下缓冲大小
+      ringBufferSizeInHalfOpenState: 3
+      # open切换到 halfopen 所需时间
+      waitInterval: 5000
+      # 故障率阈值百分比上限，超过断开
+      failureRateThreshold: 50
+      # 时间缓冲区大小
+      eventConsumerBufferSize: 10
+      # 开启健康检测
+      registerHealthIndicator: true
+#      recordFailurePredicate: cn.com.scitc.RecordFailurePredicate
+      recordExceptions:
+        - org.springframework.web.client.HttpServerErrorException
+      ignoreExceptions:
+        - org.springframework.web.client.HttpClientErrorException
+
+#resilience4j:
+#  retry:
+#    # 优先级
+#    retryAspectOrder: 399
+#    backends:
+#      # 重试策略A
+#      retryBackendA:
+#        maxAttempts: 3
+#        waitDuration: 10s
+#        enableExponentialBackoff: true
+#        exponentialBackoffMultiplier: 2
+#        retryExceptions:
+#          - org.springframework.web.client.HttpServerErrorException
+#          - java.io.IOException
+#          - com.examle.controller.exception.OpException
+#          - feign.FeignException
+#        ignoreExceptions:
+#          - io.github.robwin.exception.BusinessException
+#        # 最大重试次数
+#        maxRetryAttempts: 3
+#        # 下一次重试等待时间，最小为100 ms
+#        waitDuration: 600
+#        # 重试事件缓冲区大小
+#        eventConsumerBufferSize: 1
+#        # 重试时间微小差异，防止时间因素导致的失败
+#        enableExponentialBackoff: true
+#        # 时间间隔乘数
+#        exponentialBackoffMultiplier: 2
+#        # 下次重试时间间隔是否随机，与enableExponentialBackoff作用类似，且不可同时开启
+#        enableRandomizedWait: false
+#        randomizedWaitFactor: 2
+#        # 定义为请求失败的类
+##        retryExceptionPredicate: cn.com.scitc.RecordFailurePredicate
+#        # 重试异常
+#        retryExceptions:
+#          - java.io.IOException
+#        # 忽略异常
+#        ignoreExceptions:
+#          - cn.com.scitc.exception.IgnoredException
